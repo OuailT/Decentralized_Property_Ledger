@@ -1,0 +1,1 @@
+#forge test --contracts ./src/test/PropertyTitle.sol -vvvv
