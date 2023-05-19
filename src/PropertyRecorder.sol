@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.20;
+pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
@@ -19,7 +19,7 @@ contract PropertyRecorder is ERC721URIStorage {
     address[] public managers;
 
     // Id to property Struct
-    mapping(uint256 => PropertyData) private idToProperty;
+    mapping(uint256 => PropertyData) public idToProperty;
 
     // Address to bool
     mapping(address => bool) public isManager;
@@ -32,6 +32,8 @@ contract PropertyRecorder is ERC721URIStorage {
       uint256 instrumentNumber;
       bool recorded;
     }
+
+
 
     event PropertyCreated (
       uint256 indexed tokenId,
@@ -46,14 +48,28 @@ contract PropertyRecorder is ERC721URIStorage {
     }
 
     /*** modifier */
-    modifier onlyManager(address _manager) {
-      require(isManager[_manager],"Caller not authorized");
+    modifier onlyManager() {
+      require(isManager[msg.sender],"Caller not authorized");
       _;
     }
 
     modifier onlyOwner() {
       require(admin == msg.sender, "Caller not authorized");
       _;
+    }
+
+    /// @notice Allows minting a property and recording the associated metadata
+    /// @param tokenURI URL that holds the metadata of the property
+    /// @param instrumentNum Instrument number associated with a property/NFT
+    /// @return The tokenId of the minted property
+    function createPropertyByManagers(string memory tokenURI, uint256 instrumentNum) public onlyManager() returns (uint) {
+      _tokenIds.increment();
+      uint256 newTokenId = _tokenIds.current();
+
+      _mint(msg.sender, newTokenId);
+      _setTokenURI(newTokenId, tokenURI);
+      recordProperty(newTokenId, instrumentNum);
+      return newTokenId;
     }
 
     
@@ -78,7 +94,7 @@ contract PropertyRecorder is ERC721URIStorage {
     function recordProperty(
       uint256 tokenId,
       uint256 instrumentNum
-    ) private {
+    ) internal {
 
       idToProperty[tokenId] =  PropertyData(
         tokenId,
@@ -175,6 +191,7 @@ contract PropertyRecorder is ERC721URIStorage {
       }
       return items;
     }
+
 
     /// @notice Function that allows the admin to add a new manager
     /// @param _newManager Manager address
