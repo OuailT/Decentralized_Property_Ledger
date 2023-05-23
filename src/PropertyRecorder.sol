@@ -24,7 +24,6 @@ contract PropertyRecorder is ERC721URIStorage {
     // Address to bool
     mapping(address => bool) public isManager;
 
-
     struct PropertyData {
       uint256 tokenId;
       address recorder;
@@ -32,8 +31,6 @@ contract PropertyRecorder is ERC721URIStorage {
       uint256 instrumentNumber;
       bool recorded;
     }
-
-
 
     event PropertyCreated (
       uint256 indexed tokenId,
