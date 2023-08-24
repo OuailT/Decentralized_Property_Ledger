@@ -31,7 +31,7 @@ The Property Titles Recorder is a decentralized application (Dapp) built on the 
 
 ### Contract Address
 
-[View Property Title Recorder Smart Contract on Sepolia Testnet](https://sepolia.etherscan.io/tx/0x3112d31ab34c5e15656bf7a8257f2779c548ad521b3cf7c43c10b015610b56d9)
+[View Property Title Recorder Smart Contract on Sepolia Testnet](https://sepolia.etherscan.io/address/0xc495512d4dfeb2ad5ad180af4613b9411eafa467)
 
 
 ## Foundry Test
