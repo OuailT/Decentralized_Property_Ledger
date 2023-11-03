@@ -6,8 +6,11 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
 
-/// @notice Smart contract that allows users to record property titles in the form of NFTs
+/// @title A contract for recording property titles as NFTs on the blockchain
+/// @notice This contract uses ERC-721 standard for tokenizing property titles and allows various user roles to interact with property data.
+/// @dev The contract utilizes OpenZeppelin's ERC721 and Counters libraries for token creation and management.
 
+contract PropertyRecorder is ERC721URIStorage {
 
 contract PropertyRecorder is ERC721URIStorage {
     using Counters for Counters.Counter;
@@ -61,10 +64,10 @@ contract PropertyRecorder is ERC721URIStorage {
 
     
 
-    /// @notice Allows minting a property and recording the associated metadata
+    /// @notice Allows minting of a property and recording the associated metadata
     /// @param tokenURI URL that holds the metadata of the property
-    /// @param instrumentNum Instrument number associated with a property/NFT
-    /// @return The tokenId of the minted property
+    /// @param instrumentNum Instrument number associated with the property/NFT
+    /// @return newTokenId The tokenId of the minted property
     function createProperty(string memory tokenURI, uint256 instrumentNum) external returns (uint256) {
       _tokenIds.increment();
       uint256 newTokenId = _tokenIds.current();
@@ -76,7 +79,9 @@ contract PropertyRecorder is ERC721URIStorage {
     }
 
 
-    // Allows the owner of an NFT or a a manager to change the Metadata
+    /// @notice Allows the owner of an NFT or a manager to change the metadata
+    /// @param tokenId The token ID of the NFT
+    /// @param _tokenURI New metadata URI to be set for the token
     function setTokenURI(uint256 tokenId, string memory _tokenURI) external {
         if(idToProperty[tokenId].recorder == msg.sender) {
             return _setTokenURI(tokenId, _tokenURI);
@@ -88,9 +93,9 @@ contract PropertyRecorder is ERC721URIStorage {
     }
 
 
-    /// @notice Allows recording the metadata of a property
+    /// @notice Records the metadata of a property internally
     /// @param tokenId Token ID of the minted property
-    /// @param instrumentNum Instrument number associated with a property/NFT
+    /// @param instrumentNum Instrument number associated with the property/NFT
     function recordProperty(
       uint256 tokenId,
       uint256 instrumentNum
@@ -119,8 +124,8 @@ contract PropertyRecorder is ERC721URIStorage {
     }
 
 
-    /// @notice Returns the properties held by the contract
-    /// @return PropertyData[]
+    /// @notice Returns the properties held by the contract that managers can view
+    /// @return items Array of PropertyData that managers have access to
     function fetchAllPropertiesByManagers() public view returns (PropertyData[] memory) {
       uint itemCount = _tokenIds.current();
       uint currentIndex = 0;
@@ -138,8 +143,8 @@ contract PropertyRecorder is ERC721URIStorage {
     }
 
 
-    /// @notice Returns the properties held by the contract
-    /// @return PropertyData[]
+    /// @notice Returns all the properties recorded in the contract
+    /// @return items Array of all recorded PropertyData
     function fetchAllProperties() public view returns (PropertyData[] memory) {
       uint itemCount = _tokenIds.current();
       uint currentIndex = 0;
@@ -157,9 +162,9 @@ contract PropertyRecorder is ERC721URIStorage {
     }
 
     
-    /// @notice Fetches and filters properties based on their _instrumentNumber
+    /// @notice Fetches and filters properties based on their instrument number
     /// @param _instrumentNum Instrument number of a property
-    /// @return PropertyData[]
+    /// @return items Array of PropertyData matching the instrument number
     function fetchPropertiesByNum(uint256 _instrumentNum) public view returns (PropertyData[] memory) {
     uint256 itemCount = _tokenIds.current();
     uint256 count = 0;
@@ -188,8 +193,8 @@ contract PropertyRecorder is ERC721URIStorage {
   }
 
 
-    /// @notice Fetch property that user recorded
-    /// @return PropertyData[]
+    /// @notice Fetches properties recorded by the calling user
+    /// @return items Array of PropertyData recorded by the user
     function fetchUserProperty() public view returns (PropertyData[] memory) {
       uint totalItemCount = _tokenIds.current();
       uint itemCount = 0;
@@ -214,8 +219,8 @@ contract PropertyRecorder is ERC721URIStorage {
     }
 
     
-    /// @notice Function that allows the admin to add a new manager
-    /// @param _newManager Manager address
+    /// @notice Allows the admin to add a new manager
+    /// @param _newManager Address of the manager to be added
     function addManager(address _newManager) external onlyOwner {
       require(!isManager[_newManager], "Manager is not unique");
         managers.push(_newManager);
@@ -223,7 +228,8 @@ contract PropertyRecorder is ERC721URIStorage {
     }
 
 
-    /// @notice Function allow Managers to approve properties status
+    /// @notice Allows Managers to approve the status of properties
+    /// @param tokenId Token ID of the property to approve
     function approvedPropertyStatus(uint256 tokenId) external onlyManager {
       PropertyData storage property = idToProperty[tokenId];
       require(property.recorder != address(0), "property doesn't exesit...");
