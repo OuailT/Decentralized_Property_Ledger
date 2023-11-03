@@ -11,8 +11,6 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 /// @dev The contract utilizes OpenZeppelin's ERC721 and Counters libraries for token creation and management.
 
 contract PropertyRecorder is ERC721URIStorage {
-
-contract PropertyRecorder is ERC721URIStorage {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
     Counters.Counter private _titlesTransferred; // Transfer title
